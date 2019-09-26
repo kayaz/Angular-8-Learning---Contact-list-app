@@ -14,13 +14,17 @@ import {RefreshComponent} from './refresh/refresh.component';
 
 import {NgxPaginationModule} from 'ngx-pagination';
 
+import { FullCalendarModule } from '@fullcalendar/angular';
+import { CalendarComponent } from './calendar/calendar.component';
+
 @NgModule({
   declarations: [
     AppComponent,
     ContactListComponent,
     ContactAddComponent,
     ContactEditComponent,
-    RefreshComponent
+    RefreshComponent,
+    CalendarComponent
   ],
   imports: [
     BrowserModule,
@@ -28,7 +32,8 @@ import {NgxPaginationModule} from 'ngx-pagination';
     SlimLoadingBarModule,
     FormsModule,
     HttpClientModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    FullCalendarModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../api.service';
 import { Contact } from '../contact';
-import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-contact-list',
@@ -12,7 +11,7 @@ export class ContactListComponent implements OnInit {
 
   contacts: Contact[];
   config: any;
-  constructor(private apiService: ApiService, private router: Router) {
+  constructor(private apiService: ApiService) {
     this.config = {
       itemsPerPage: 3,
       currentPage: 1

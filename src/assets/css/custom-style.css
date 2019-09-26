@@ -24,3 +24,7 @@ html, body {
   padding: 0;
   text-align: right;
 }
+
+/* Kalendarz
+================================================== */
+.fc-event {cursor: pointer}

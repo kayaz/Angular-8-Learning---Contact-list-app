@@ -1,0 +1,23 @@
+<div class="card mt-5">
+  <div class="card-header">
+    <div class="row">
+      <div class="col-8 d-flex align-items-center">
+        <h5 class="mb-0">Kalendarz</h5>
+      </div>
+      <div class="col-4 text-right">
+        <a class="btn btn-sm btn-success" href="#"><strong>DODAJ WYDARZENIE</strong></a>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <full-calendar
+      (dateClick)="handleDateClick($event)"
+      (eventClick)="handleEventClick()"
+      defaultView="dayGridMonth"
+      [plugins]="calendarPlugins"
+      [events]="[
+        { title: 'Wydarzenie 1', date: '2019-09-26' },
+        { title: 'Wydarzenie 2', date: '2019-09-27' }
+      ]"></full-calendar>
+  </div>
+</div>
