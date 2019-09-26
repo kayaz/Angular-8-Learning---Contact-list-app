@@ -17,6 +17,8 @@ import {NgxPaginationModule} from 'ngx-pagination';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { CalendarComponent } from './calendar/calendar.component';
 
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -27,6 +29,7 @@ import { CalendarComponent } from './calendar/calendar.component';
     CalendarComponent
   ],
   imports: [
+    NgbModule,
     BrowserModule,
     AppRoutingModule,
     SlimLoadingBarModule,

@@ -10,14 +10,31 @@
     </div>
   </div>
   <div class="card-body">
-    <full-calendar
-      (dateClick)="handleDateClick($event)"
-      (eventClick)="handleEventClick()"
-      defaultView="dayGridMonth"
+    <full-calendar #calendar defaultView="dayGridMonth"
       [plugins]="calendarPlugins"
       [events]="[
         { title: 'Wydarzenie 1', date: '2019-09-26' },
         { title: 'Wydarzenie 2', date: '2019-09-27' }
-      ]"></full-calendar>
+      ]"
+      (eventClick)="handleEventClick($event)"
+      ></full-calendar>
   </div>
 </div>
+
+<ng-template #popContent>{{message}}</ng-template>
+<div [ngbPopover]="popContent" #popOver="ngbPopover" triggers="manual" placement="bottom" ></div>
+
+<ng-template #mymodal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{modaltitle}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    Here I am!
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Ok</button>
+  </div>
+</ng-template>
