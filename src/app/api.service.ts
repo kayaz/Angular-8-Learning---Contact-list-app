@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { Contact } from './contact';
+import { Calendar } from './calendar';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -31,4 +32,15 @@ export class ApiService {
     return this.httpClient.delete<Contact>(`${this.PHP_API_SERVER}/delete.php/?id=${id}`);
   }
 
+  createEvent(calendar: Calendar): Observable<Calendar> {
+    return this.httpClient.post<Calendar>(`${this.PHP_API_SERVER}/calendar/create.php`, calendar);
+  }
+
+  readEvents(): Observable<Calendar[]> {
+    return this.httpClient.get<Calendar[]>(`${this.PHP_API_SERVER}/calendar/read.php`);
+  }
+
+  editEvent(id: number): Observable<Calendar[]> {
+    return this.httpClient.get<Calendar[]>(`${this.PHP_API_SERVER}/calendar/show.php/?id=${id}`);
+  }
 }

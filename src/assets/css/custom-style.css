@@ -28,3 +28,15 @@ html, body {
 /* Kalendarz
 ================================================== */
 .fc-event {cursor: pointer}
+.fc-title {
+  color: white;
+  font-size: 12px;
+}
+.fc-event {
+  border-radius: 0;
+  padding: 1px 6px;
+}
+.card a:not([href]):not([tabindex]) {
+  color: white;
+  cursor: pointer;
+}

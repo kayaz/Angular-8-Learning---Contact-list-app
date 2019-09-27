@@ -5,24 +5,19 @@
         <h5 class="mb-0">Kalendarz</h5>
       </div>
       <div class="col-4 text-right">
-        <a class="btn btn-sm btn-success" href="#"><strong>DODAJ WYDARZENIE</strong></a>
+        <a class="btn btn-sm btn-success" (click)="openModal()"><strong>DODAJ WYDARZENIE</strong></a>
       </div>
     </div>
   </div>
   <div class="card-body">
     <full-calendar #calendar defaultView="dayGridMonth"
       [plugins]="calendarPlugins"
-      [events]="[
-        { title: 'Wydarzenie 1', date: '2019-09-26' },
-        { title: 'Wydarzenie 2', date: '2019-09-27' }
-      ]"
+      [events]="eventsModel"
+      (dateClick)="handleDateClick($event)"
       (eventClick)="handleEventClick($event)"
       ></full-calendar>
   </div>
 </div>
-
-<ng-template #popContent>{{message}}</ng-template>
-<div [ngbPopover]="popContent" #popOver="ngbPopover" triggers="manual" placement="bottom" ></div>
 
 <ng-template #mymodal let-modal>
   <div class="modal-header">
@@ -31,10 +26,47 @@
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
+  <form #form="ngForm" (ngSubmit) = "newEvent(form)">
   <div class="modal-body">
-    Here I am!
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="event_typ">Typ wydarzenia</label>
+        <select class="form-control" id="event_typ" [(ngModel)]="selectedEvent.typ" ngModel name="event_typ">
+          <option *ngFor="let type of types" [value]="type.value">{{type.name}}</option>
+        </select>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="event_status">Status wydarzenia</label>
+        <select class="form-control" id="event_status" [(ngModel)]="selectedEvent.status" ngModel name="event_status">
+          <option *ngFor="let status of statuses" [value]="status.value">{{status.name}}</option>
+        </select>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="event_name">Nazwa wydarzenia</label>
+        <input type="text" class="form-control" id="event_name" [(ngModel)]="selectedEvent.nazwa" ngModel name="event_name">
+      </div>
+      <div class="form-group col-md-6">
+        <label for="event_date">Data wydarzenia</label>
+        <input type="text" class="form-control" id="event_date" [(ngModel)]="selectedEvent.data" ngModel name="event_date">
+      </div>
+      <div class="form-group col-md-6">
+        <label for="event_inwest">Inwestycja</label>
+        <select class="form-control" id="event_inwest" [(ngModel)]="selectedEvent.id_inwest" ngModel name="event_inwest">
+          <option *ngFor="let investment of investments" [value]="investment.value">{{investment.name}}</option>
+        </select>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="typeahead_user">Klient</label>
+        <input type="text" class="form-control" id="typeahead_user" [(ngModel)]="selectedEvent.id_klient" ngModel name="typeahead_user">
+      </div>
+      <div class="form-group col-md-12">
+        <label for="event_desc">Opis wydarzenia</label>
+        <textarea class="form-control" id="event_desc" rows="3" [(ngModel)]="selectedEvent.opis" ngModel name="event_desc"></textarea>
+      </div>
+    </div>
   </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Ok</button>
+  <div class="modal-footer col-md-12">
+    <button type="submit" class="btn btn-secondary">Zapisz</button>
   </div>
+  </form>
 </ng-template>
