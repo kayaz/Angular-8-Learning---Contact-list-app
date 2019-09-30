@@ -2,10 +2,13 @@ import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 
+import {Observable} from 'rxjs';
+import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
+
 import { ApiService } from '../api.service';
 import { Calendar } from '../calendar';
 
-import { NgbModal, ModalDismissReasons, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, ModalDismissReasons, NgbModalOptions, NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
 import {Contact} from '../contact';
 
 @Component({
@@ -13,13 +16,17 @@ import {Contact} from '../contact';
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.css']
 })
+
 export class CalendarComponent implements OnInit {
   calendarPlugins = [dayGridPlugin, interactionPlugin];
   modaltitle: any;
   eventsModel: any;
+  contacts: Contact[];
   eventId: string;
+  search: (text$: Observable<string>) => Observable<any[]>;
   modalOptions: NgbModalOptions;
-
+  nazwisko: string;
+  clickedItem: number;
   selectedEvent: Calendar = {
     id: null,
     id_user: null,
@@ -54,6 +61,9 @@ export class CalendarComponent implements OnInit {
     {value: '4', name: 'Inwestycja 4'}
   ];
 
+
+  formatter = (client: {nazwisko: string}) => client.nazwisko;
+
   // @ts-ignore
   @ViewChild('mymodal') editModal: TemplateRef<any>;
 
@@ -63,7 +73,7 @@ export class CalendarComponent implements OnInit {
       backdropClass: 'customBackdrop'
     };
   }
-  private static getDismissReason(reason: any): string {
+  getDismissReason(reason: any): string {
     if (reason === ModalDismissReasons.ESC) {
       return 'by pressing ESC';
     } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
@@ -75,6 +85,7 @@ export class CalendarComponent implements OnInit {
 
   ngOnInit() {
     this.getEvents();
+    this.getClients();
   }
 
   openModal() {
@@ -83,6 +94,9 @@ export class CalendarComponent implements OnInit {
   }
   handleDateClick(arg) {
     this.modaltitle = 'Dodaj wydarzenie';
+    // todo: find better way to clear inputs
+    this.resetModalForm();
+    this.selectedEvent.data = arg.dateStr;
     this.modalService.open(this.editModal, { centered: true });
   }
   handleEventClick(arg) {
@@ -90,7 +104,6 @@ export class CalendarComponent implements OnInit {
     this.apiService.editEvent(Number(this.eventId)).subscribe((calendar: Calendar[]) => {
       // @ts-ignore
       this.selectedEvent = calendar;
-      console.log(calendar);
     });
     this.modaltitle = 'Edytuj wydarzenie';
     this.modalService.open(this.editModal, { centered: true });
@@ -103,8 +116,36 @@ export class CalendarComponent implements OnInit {
   }
   getEvents() {
     this.apiService.readEvents().subscribe((calendar: Calendar[]) => {
-      console.log(calendar);
       this.eventsModel = calendar;
     });
+  }
+  getClients() {
+    this.apiService.readContact().subscribe((contacts: Contact[]) => {
+      const names = [];
+      // todo: change for to foreach or map
+      for (let i = 0; i < contacts.length; i++) {
+        names.push({nazwisko: contacts[i].nazwisko, id: contacts[i].id});
+      }
+
+      this.search = (text$: Observable<string>) =>
+        text$.pipe(
+          debounceTime(200),
+          distinctUntilChanged(),
+          map(term => term.length < 2 ? []
+            : names.filter(v => v.nazwisko.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
+        );
+    });
+  }
+  resetModalForm() {
+    this.selectedEvent.typ = null;
+    this.selectedEvent.status = null;
+    this.selectedEvent.nazwa = '';
+    this.selectedEvent.id_inwest = null;
+    this.selectedEvent.id_klient = null;
+    this.selectedEvent.opis = '';
+  }
+  selectedItem(item) {
+    this.clickedItem = item.item.id;
+    console.log(this.clickedItem);
   }
 }
