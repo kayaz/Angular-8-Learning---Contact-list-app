@@ -33,7 +33,6 @@
         <label for="event_typ">Typ wydarzenia</label>
         <select class="form-control" id="event_typ"
                 formControlName="typ"
-                ngModel
                 name="event_typ"
         >
           <option *ngFor="let type of types" [value]="type.value">{{type.name}}</option>
@@ -43,7 +42,6 @@
         <label for="event_status">Status wydarzenia</label>
         <select class="form-control" id="event_status"
                 formControlName="status"
-                ngModel
                 name="event_status"
         >
           <option *ngFor="let status of statuses" [value]="status.value">{{status.name}}</option>
@@ -54,7 +52,6 @@
         <input type="text" class="form-control" id="event_name"
                [ngClass]="{ 'is-invalid': submitted && modalForm.controls.nazwa.errors }"
                formControlName="nazwa"
-               ngModel
                name="event_name"
         >
         <div *ngIf="submitted && modalForm.controls.nazwa.errors" class="text-danger">
@@ -63,17 +60,22 @@
       </div>
       <div class="form-group col-md-6">
         <label for="event_date">Data wydarzenia</label>
-        <input type="text" class="form-control" id="event_date"
-               formControlName="data"
-               ngModel
-               name="event_date"
-        >
+        <div class="input-group">
+          <input type="text" class="form-control" id="event_date"
+                 formControlName="data"
+                 name="event_date"
+                 ngbDatepicker #d="ngbDatepicker"
+                 placeholder="yyyy-mm-dd"
+          >
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"></button>
+          </div>
+        </div>
       </div>
       <div class="form-group col-md-6">
         <label for="event_inwest">Inwestycja</label>
         <select class="form-control" id="event_inwest"
                 formControlName="id_inwest"
-                ngModel
                 name="event_inwest"
         >
           <option *ngFor="let investment of investments" [value]="investment.value">{{investment.name}}</option>
@@ -84,33 +86,35 @@
         <input type="text" class="form-control" id="typeahead_user"
                (selectItem)="selectedItem($event)"
                [ngbTypeahead]="search"
+               [editable]="false"
                [resultTemplate]="rt"
                [inputFormatter]="formatter"
                [ngClass]="{ 'is-invalid': submitted && modalForm.controls.typeahead_user.errors }"
                formControlName="typeahead_user"
-               ngModel
                name="typeahead_user"
         >
         <div *ngIf="submitted && modalForm.controls.typeahead_user.errors" class="text-danger">
           <div *ngIf="modalForm.controls.typeahead_user.errors.required">To pole jest wymagane</div>
         </div>
-
       </div>
       <div class="form-group col-md-12">
         <label for="event_desc">Opis wydarzenia</label>
         <textarea class="form-control" id="event_desc" rows="3"
                   formControlName="opis"
-                  ngModel
                   name="event_desc"
         ></textarea>
       </div>
     </div>
   </div>
   <div class="modal-footer col-md-12">
-    <button type="submit" class="btn btn-secondary">Zapisz</button>
+    <button type="button" class="btn btn-primary" *ngIf="!isHidden" [disabled]="!modalForm.valid" (click)="editEvent(modalForm, eventId)">Zapisz</button>
+    <button type="button" class="btn btn-danger" *ngIf="!isHidden" [disabled]="!modalForm.valid" (click)="deleteEvent(eventId)">Usuń</button>
+    <button type="submit" class="btn btn-secondary" *ngIf="isHidden" [disabled]="!modalForm.valid">Zapisz</button>
   </div>
   </form>
 </ng-template>
+
+<ngb-datepicker #d></ngb-datepicker>
 
 <ng-template #rt let-name="result" let-t="term">
   <ngb-highlight [result]="name.nazwisko" [term]="t"></ngb-highlight>

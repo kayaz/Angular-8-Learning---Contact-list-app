@@ -27,11 +27,10 @@ export class CalendarComponent implements OnInit {
 
   modalForm: FormGroup;
   submitted = false;
-
+  isHidden: boolean;
   calendarPlugins = [dayGridPlugin, interactionPlugin];
   modaltitle: any;
   eventsModel: any;
-  selectedName: any;
   contacts: Contact[];
   eventId: string;
   search: (text$: Observable<string>) => Observable<any[]>;
@@ -90,22 +89,33 @@ export class CalendarComponent implements OnInit {
       opis: [''],
       typeahead_user: ['', Validators.required]
     });
+
+    this.isHidden = true;
   }
 
   openModal() {
     this.modaltitle = 'Dodaj wydarzenie';
-    // todo: find better way to clear inputs
-    this.resetModalForm();
+    this.modalForm.reset();
     this.modalService.open(this.editModal, { centered: true });
   }
   handleDateClick(arg) {
     this.modaltitle = 'Dodaj wydarzenie';
-    // todo: find better way to clear inputs
-    this.resetModalForm();
-    this.selectedEvent.data = arg.dateStr;
+    this.modalForm.reset();
+    this.isHidden = true;
+    this.modalForm.setValue({
+      typ: null,
+      status: null,
+      nazwa: null,
+      data: arg.dateStr,
+      id_inwest: null,
+      opis: null,
+      typeahead_user: null
+    });
     this.modalService.open(this.editModal, { centered: true });
   }
   handleEventClick(arg) {
+    // tslint:disable-next-line:label-position no-unused-expression
+    this.isHidden = false;
     this.eventId = arg.event._def.publicId;
     this.apiService.editEvent(Number(this.eventId)).subscribe((calendar) => {
       // @ts-ignore
@@ -115,10 +125,10 @@ export class CalendarComponent implements OnInit {
         typ: this.selectedEvent.typ,
         status: this.selectedEvent.status,
         nazwa: this.selectedEvent.nazwa,
-        data: this.selectedEvent.data,
+        data: new Date(this.selectedEvent.data),
         id_inwest: this.selectedEvent.id_inwest,
         opis: this.selectedEvent.opis,
-        typeahead_user: {nazwisko: this.selectedEvent.nazwa_klient}
+        typeahead_user: {nazwisko: this.selectedEvent.nazwa_klient, id: this.selectedEvent.id_klient}
       });
     });
     this.modaltitle = 'Edytuj wydarzenie';
@@ -130,12 +140,32 @@ export class CalendarComponent implements OnInit {
       return;
     }
 
-    alert('SUCCESS!!');
-
-    // this.apiService.createEvent(form.value).subscribe(() => {
+    this.apiService.createEvent(form.value).subscribe(() => {
+      this.modalService.dismissAll();
+      this.getEvents();
+    });
+  }
+  editEvent(form, id) {
+    this.submitted = true;
+    if (this.modalForm.invalid) {
+      return;
+    }
+    console.log(form.value);
+    // form.value.id = id;
+    // this.apiService.updateEvent(form.value).subscribe(() => {
+    //   this.isHidden = true;
+    //   this.modalForm.reset();
     //   this.modalService.dismissAll();
     //   this.getEvents();
     // });
+  }
+  deleteEvent(id) {
+    this.apiService.deleteEvent(id).subscribe(() => {
+      this.isHidden = true;
+      this.modalForm.reset();
+      this.modalService.dismissAll();
+      this.getEvents();
+    });
   }
   getEvents() {
     this.apiService.readEvents().subscribe((calendar) => {
@@ -156,14 +186,6 @@ export class CalendarComponent implements OnInit {
             : names.filter(v => v.nazwisko.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
         );
     });
-  }
-  resetModalForm() {
-    this.selectedEvent.typ = null;
-    this.selectedEvent.status = null;
-    this.selectedEvent.nazwa = '';
-    this.selectedEvent.id_inwest = null;
-    this.selectedEvent.id_klient = null;
-    this.selectedEvent.opis = '';
   }
   selectedItem(item) {
     this.clickedItem = item.item.id;

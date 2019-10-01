@@ -43,4 +43,12 @@ export class ApiService {
   editEvent(id: number): Observable<Calendar[]> {
     return this.httpClient.get<Calendar[]>(`${this.PHP_API_SERVER}/calendar/show.php/?id=${id}`);
   }
+
+  deleteEvent(id: number) {
+    return this.httpClient.delete<Contact>(`${this.PHP_API_SERVER}/calendar/delete.php/?id=${id}`);
+  }
+
+  updateEvent(calendar: Calendar) {
+    return this.httpClient.put<Contact>(`${this.PHP_API_SERVER}/calendar/update.php`, calendar);
+  }
 }
