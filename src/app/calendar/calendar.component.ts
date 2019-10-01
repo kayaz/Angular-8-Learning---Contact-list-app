@@ -1,15 +1,14 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
-
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {Observable} from 'rxjs';
 import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
+import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 
 import { ApiService } from '../api.service';
 import { Calendar } from '../calendar';
-
-import { NgbModal, ModalDismissReasons, NgbModalOptions, NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
-import {Contact} from '../contact';
+import { Contact } from '../contact';
 
 @Component({
   selector: 'app-calendar',
@@ -18,14 +17,25 @@ import {Contact} from '../contact';
 })
 
 export class CalendarComponent implements OnInit {
+
+  constructor(private apiService: ApiService, private modalService: NgbModal, private formBuilder: FormBuilder) {
+    this.modalOptions = {
+      backdrop: 'static',
+      backdropClass: 'customBackdrop'
+    };
+  }
+
+  modalForm: FormGroup;
+  submitted = false;
+
   calendarPlugins = [dayGridPlugin, interactionPlugin];
   modaltitle: any;
   eventsModel: any;
+  selectedName: any;
   contacts: Contact[];
   eventId: string;
   search: (text$: Observable<string>) => Observable<any[]>;
   modalOptions: NgbModalOptions;
-  nazwisko: string;
   clickedItem: number;
   selectedEvent: Calendar = {
     id: null,
@@ -33,6 +43,7 @@ export class CalendarComponent implements OnInit {
     id_klient: null,
     id_inwest: null,
     nazwa: null,
+    nazwa_klient: null,
     opis: null,
     data: null,
     status: null,
@@ -61,35 +72,30 @@ export class CalendarComponent implements OnInit {
     {value: '4', name: 'Inwestycja 4'}
   ];
 
-
-  formatter = (client: {nazwisko: string}) => client.nazwisko;
-
   // @ts-ignore
   @ViewChild('mymodal') editModal: TemplateRef<any>;
 
-  constructor(private apiService: ApiService, private modalService: NgbModal) {
-    this.modalOptions = {
-      backdrop: 'static',
-      backdropClass: 'customBackdrop'
-    };
-  }
-  getDismissReason(reason: any): string {
-    if (reason === ModalDismissReasons.ESC) {
-      return 'by pressing ESC';
-    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
-      return 'by clicking on a backdrop';
-    } else {
-      return  `with: ${reason}`;
-    }
-  }
+  formatter = (client: {nazwisko: string}) => client.nazwisko;
 
   ngOnInit() {
     this.getEvents();
     this.getClients();
+
+    this.modalForm = this.formBuilder.group({
+      typ: [''],
+      status: [''],
+      nazwa: ['', Validators.required],
+      data: [''],
+      id_inwest: [''],
+      opis: [''],
+      typeahead_user: ['', Validators.required]
+    });
   }
 
   openModal() {
     this.modaltitle = 'Dodaj wydarzenie';
+    // todo: find better way to clear inputs
+    this.resetModalForm();
     this.modalService.open(this.editModal, { centered: true });
   }
   handleDateClick(arg) {
@@ -101,31 +107,46 @@ export class CalendarComponent implements OnInit {
   }
   handleEventClick(arg) {
     this.eventId = arg.event._def.publicId;
-    this.apiService.editEvent(Number(this.eventId)).subscribe((calendar: Calendar[]) => {
+    this.apiService.editEvent(Number(this.eventId)).subscribe((calendar) => {
       // @ts-ignore
       this.selectedEvent = calendar;
+
+      this.modalForm.setValue({
+        typ: this.selectedEvent.typ,
+        status: this.selectedEvent.status,
+        nazwa: this.selectedEvent.nazwa,
+        data: this.selectedEvent.data,
+        id_inwest: this.selectedEvent.id_inwest,
+        opis: this.selectedEvent.opis,
+        typeahead_user: {nazwisko: this.selectedEvent.nazwa_klient}
+      });
     });
     this.modaltitle = 'Edytuj wydarzenie';
     this.modalService.open(this.editModal, { centered: true });
   }
   newEvent(form) {
-    this.apiService.createEvent(form.value).subscribe((calendar: Calendar) => {
-      this.modalService.dismissAll();
-      this.getEvents();
-    });
+    this.submitted = true;
+    if (this.modalForm.invalid) {
+      return;
+    }
+
+    alert('SUCCESS!!');
+
+    // this.apiService.createEvent(form.value).subscribe(() => {
+    //   this.modalService.dismissAll();
+    //   this.getEvents();
+    // });
   }
   getEvents() {
-    this.apiService.readEvents().subscribe((calendar: Calendar[]) => {
+    this.apiService.readEvents().subscribe((calendar) => {
       this.eventsModel = calendar;
     });
   }
   getClients() {
-    this.apiService.readContact().subscribe((contacts: Contact[]) => {
-      const names = [];
-      // todo: change for to foreach or map
-      for (let i = 0; i < contacts.length; i++) {
-        names.push({nazwisko: contacts[i].nazwisko, id: contacts[i].id});
-      }
+    this.apiService.readContact().subscribe((contacts) => {
+      const names = contacts.map(client => {
+        return {nazwisko: client.nazwisko, id: client.id};
+      });
 
       this.search = (text$: Observable<string>) =>
         text$.pipe(

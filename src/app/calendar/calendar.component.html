@@ -26,42 +26,83 @@
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
-  <form #form="ngForm" (ngSubmit) = "newEvent(form)">
+  <form [formGroup]="modalForm" (ngSubmit)="newEvent(modalForm)">
   <div class="modal-body">
     <div class="form-row">
       <div class="form-group col-md-6">
         <label for="event_typ">Typ wydarzenia</label>
-        <select class="form-control" id="event_typ" [(ngModel)]="selectedEvent.typ" ngModel name="event_typ">
+        <select class="form-control" id="event_typ"
+                formControlName="typ"
+                ngModel
+                name="event_typ"
+        >
           <option *ngFor="let type of types" [value]="type.value">{{type.name}}</option>
         </select>
       </div>
       <div class="form-group col-md-6">
         <label for="event_status">Status wydarzenia</label>
-        <select class="form-control" id="event_status" [(ngModel)]="selectedEvent.status" ngModel name="event_status">
+        <select class="form-control" id="event_status"
+                formControlName="status"
+                ngModel
+                name="event_status"
+        >
           <option *ngFor="let status of statuses" [value]="status.value">{{status.name}}</option>
         </select>
       </div>
       <div class="form-group col-md-6">
         <label for="event_name">Nazwa wydarzenia</label>
-        <input type="text" class="form-control" id="event_name" [(ngModel)]="selectedEvent.nazwa" ngModel name="event_name">
+        <input type="text" class="form-control" id="event_name"
+               [ngClass]="{ 'is-invalid': submitted && modalForm.controls.nazwa.errors }"
+               formControlName="nazwa"
+               ngModel
+               name="event_name"
+        >
+        <div *ngIf="submitted && modalForm.controls.nazwa.errors" class="text-danger">
+          <div *ngIf="modalForm.controls.nazwa.errors.required">To pole jest wymagane</div>
+        </div>
       </div>
       <div class="form-group col-md-6">
         <label for="event_date">Data wydarzenia</label>
-        <input type="text" class="form-control" id="event_date" [(ngModel)]="selectedEvent.data" ngModel name="event_date">
+        <input type="text" class="form-control" id="event_date"
+               formControlName="data"
+               ngModel
+               name="event_date"
+        >
       </div>
       <div class="form-group col-md-6">
         <label for="event_inwest">Inwestycja</label>
-        <select class="form-control" id="event_inwest" [(ngModel)]="selectedEvent.id_inwest" ngModel name="event_inwest">
+        <select class="form-control" id="event_inwest"
+                formControlName="id_inwest"
+                ngModel
+                name="event_inwest"
+        >
           <option *ngFor="let investment of investments" [value]="investment.value">{{investment.name}}</option>
         </select>
       </div>
       <div class="form-group col-md-6">
         <label for="typeahead_user">Klient</label>
-        <input type="text" class="form-control" id="typeahead_user" (selectItem)="selectedItem($event)" [(ngModel)]="selectedEvent.id_klient" ngModel [ngbTypeahead]="search" [resultTemplate]="rt" [inputFormatter]="formatter" name="typeahead_user">
+        <input type="text" class="form-control" id="typeahead_user"
+               (selectItem)="selectedItem($event)"
+               [ngbTypeahead]="search"
+               [resultTemplate]="rt"
+               [inputFormatter]="formatter"
+               [ngClass]="{ 'is-invalid': submitted && modalForm.controls.typeahead_user.errors }"
+               formControlName="typeahead_user"
+               ngModel
+               name="typeahead_user"
+        >
+        <div *ngIf="submitted && modalForm.controls.typeahead_user.errors" class="text-danger">
+          <div *ngIf="modalForm.controls.typeahead_user.errors.required">To pole jest wymagane</div>
+        </div>
+
       </div>
       <div class="form-group col-md-12">
         <label for="event_desc">Opis wydarzenia</label>
-        <textarea class="form-control" id="event_desc" rows="3" [(ngModel)]="selectedEvent.opis" ngModel name="event_desc"></textarea>
+        <textarea class="form-control" id="event_desc" rows="3"
+                  formControlName="opis"
+                  ngModel
+                  name="event_desc"
+        ></textarea>
       </div>
     </div>
   </div>

@@ -57,3 +57,7 @@ html, body {
 .typ_4 .fc-title:before {content:"\f073"}
 .typ_5 .fc-title:before {content:"\f0e0"}
 .typ_6 .fc-title:before {content:"\f0f5"}
+
+.form-group .text-danger {
+  font-size: 11px;
+}
