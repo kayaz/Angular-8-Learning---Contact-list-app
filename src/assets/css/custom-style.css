@@ -69,3 +69,4 @@ button.calendar, button.calendar:active {
   background-position: center;
 
 }
+.ng-invalid {border-color:red}

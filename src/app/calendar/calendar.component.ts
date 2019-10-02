@@ -6,6 +6,8 @@ import {Observable} from 'rxjs';
 import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 
+import {NgbDateParserFormatter} from '@ng-bootstrap/ng-bootstrap';
+
 import { ApiService } from '../api.service';
 import { Calendar } from '../calendar';
 import { Contact } from '../contact';
@@ -18,7 +20,9 @@ import { Contact } from '../contact';
 
 export class CalendarComponent implements OnInit {
 
-  constructor(private apiService: ApiService, private modalService: NgbModal, private formBuilder: FormBuilder) {
+  constructor(
+    // tslint:disable-next-line:max-line-length
+    private apiService: ApiService, private modalService: NgbModal, private formBuilder: FormBuilder, private ngbDateParserFormatter: NgbDateParserFormatter) {
     this.modalOptions = {
       backdrop: 'static',
       backdropClass: 'customBackdrop'
@@ -31,6 +35,7 @@ export class CalendarComponent implements OnInit {
   calendarPlugins = [dayGridPlugin, interactionPlugin];
   modaltitle: any;
   eventsModel: any;
+  myDate;
   contacts: Contact[];
   eventId: string;
   search: (text$: Observable<string>) => Observable<any[]>;
@@ -114,7 +119,6 @@ export class CalendarComponent implements OnInit {
     this.modalService.open(this.editModal, { centered: true });
   }
   handleEventClick(arg) {
-    // tslint:disable-next-line:label-position no-unused-expression
     this.isHidden = false;
     this.eventId = arg.event._def.publicId;
     this.apiService.editEvent(Number(this.eventId)).subscribe((calendar) => {
@@ -125,7 +129,7 @@ export class CalendarComponent implements OnInit {
         typ: this.selectedEvent.typ,
         status: this.selectedEvent.status,
         nazwa: this.selectedEvent.nazwa,
-        data: new Date(this.selectedEvent.data),
+        data: this.ngbDateParserFormatter.parse(this.selectedEvent.data),
         id_inwest: this.selectedEvent.id_inwest,
         opis: this.selectedEvent.opis,
         typeahead_user: {nazwisko: this.selectedEvent.nazwa_klient, id: this.selectedEvent.id_klient}
@@ -140,6 +144,7 @@ export class CalendarComponent implements OnInit {
       return;
     }
 
+    form.value.data = this.ngbDateParserFormatter.format(form.value.data);
     this.apiService.createEvent(form.value).subscribe(() => {
       this.modalService.dismissAll();
       this.getEvents();
@@ -150,21 +155,17 @@ export class CalendarComponent implements OnInit {
     if (this.modalForm.invalid) {
       return;
     }
-    console.log(form.value);
-    // form.value.id = id;
-    // this.apiService.updateEvent(form.value).subscribe(() => {
-    //   this.isHidden = true;
-    //   this.modalForm.reset();
-    //   this.modalService.dismissAll();
-    //   this.getEvents();
-    // });
+
+    form.value.data = this.ngbDateParserFormatter.format(form.value.data);
+    form.value.id = id;
+
+    this.apiService.updateEvent(form.value).subscribe(() => {
+      this.refreshModal();
+    });
   }
   deleteEvent(id) {
     this.apiService.deleteEvent(id).subscribe(() => {
-      this.isHidden = true;
-      this.modalForm.reset();
-      this.modalService.dismissAll();
-      this.getEvents();
+      this.refreshModal();
     });
   }
   getEvents() {
@@ -186,6 +187,12 @@ export class CalendarComponent implements OnInit {
             : names.filter(v => v.nazwisko.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
         );
     });
+  }
+  refreshModal() {
+    this.isHidden = true;
+    this.modalForm.reset();
+    this.modalService.dismissAll();
+    this.getEvents();
   }
   selectedItem(item) {
     this.clickedItem = item.item.id;
