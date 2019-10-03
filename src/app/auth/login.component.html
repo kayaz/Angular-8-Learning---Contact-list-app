@@ -1,0 +1,21 @@
+<div class="container" style="display: flex;justify-content: center;align-items: center;height: 100vh;">
+  <div class="card" style="width: 50%;">
+    <div class="card-body">
+      <h5 class="card-title">Login Form</h5>
+      <div class="card-text">
+        <div *ngIf="error" class="alert alert-danger mt-3">{{error}}</div>
+        <form (ngSubmit)="login()" #form="ngForm">
+          <div class="form-group">
+            <label for="exampleInputEmail1">Email address</label>
+            <input type="email" class="form-control" id="exampleInputEmail1" name="email" placeholder="Enter email" [(ngModel)]="model.email" required />
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPassword1">Password</label>
+            <input type="password" class="form-control" id="exampleInputPassword1" name="password" placeholder="Password" [(ngModel)]="model.password" required />
+          </div>
+          <button type="submit" class="btn btn-primary" [disabled]="loading || !form.valid"><span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

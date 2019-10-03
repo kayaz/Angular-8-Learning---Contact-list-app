@@ -2,15 +2,14 @@ import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import {Observable} from 'rxjs';
-import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
-import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
+import { Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { NgbModal, NgbModalOptions, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 
-import {NgbDateParserFormatter} from '@ng-bootstrap/ng-bootstrap';
+import { ApiService } from '../_services/api.service';
 
-import { ApiService } from '../api.service';
-import { Calendar } from '../calendar';
-import { Contact } from '../contact';
+import { Calendar } from '../_models/calendar';
+import { Contact } from '../_models/contact';
 
 @Component({
   selector: 'app-calendar',
@@ -193,9 +192,5 @@ export class CalendarComponent implements OnInit {
     this.modalForm.reset();
     this.modalService.dismissAll();
     this.getEvents();
-  }
-  selectedItem(item) {
-    this.clickedItem = item.item.id;
-    console.log(this.clickedItem);
   }
 }

@@ -1,8 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { SlimLoadingBarModule } from 'ng2-slim-loading-bar';
 
@@ -20,6 +19,9 @@ import { CalendarComponent } from './calendar/calendar.component';
 
 import {NgbActiveModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
+import { JwtModule } from '@auth0/angular-jwt';
+import { LoginComponent } from './auth/login.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -27,7 +29,8 @@ import {NgbActiveModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
     ContactAddComponent,
     ContactEditComponent,
     RefreshComponent,
-    CalendarComponent
+    CalendarComponent,
+    LoginComponent
   ],
   imports: [
     NgbModule,
@@ -38,7 +41,16 @@ import {NgbActiveModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
     HttpClientModule,
     NgxPaginationModule,
     FullCalendarModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: () => {
+          return localStorage.getItem('access_token');
+        },
+        whitelistedDomains: ['localhost'],
+        blacklistedRoutes: ['localhost/ngauth/login']
+      }
+    })
   ],
   providers: [NgbActiveModal],
   bootstrap: [AppComponent]

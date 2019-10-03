@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Contact } from './contact';
-import { Calendar } from './calendar';
+import { Contact } from '../_models/contact';
+import { Calendar } from '../_models/calendar';
 import { Observable } from 'rxjs';
 
 @Injectable({

@@ -90,7 +90,6 @@
       <div class="form-group col-md-6">
         <label for="typeahead_user">Klient</label>
         <input type="text" class="form-control" id="typeahead_user"
-               (selectItem)="selectedItem($event)"
                [ngbTypeahead]="search"
                [editable]="false"
                [resultTemplate]="rt"

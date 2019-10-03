@@ -70,3 +70,4 @@ button.calendar, button.calendar:active {
 
 }
 .ng-invalid {border-color:red}
+.nav-link.active {font-weight: bold}

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import {SlimLoadingBarService} from 'ng2-slim-loading-bar';
+import { SlimLoadingBarService } from 'ng2-slim-loading-bar';
+import { AuthService } from './_services/auth.service';
 import { NavigationCancel,
   Event,
   NavigationEnd,
@@ -14,11 +15,14 @@ import { NavigationCancel,
 })
 export class AppComponent {
   title = 'My Contacts';
-  constructor(private loadingBar: SlimLoadingBarService, private router: Router) {
+  currentUser;
+
+  constructor(private loadingBar: SlimLoadingBarService, private router: Router, private authService: AuthService) {
     this.router.events.subscribe((event: Event) => {
       this.navigationInterceptor(event);
     });
   }
+
   private navigationInterceptor(event: Event): void {
     if (event instanceof NavigationStart) {
       this.loadingBar.start();
@@ -32,5 +36,9 @@ export class AppComponent {
     if (event instanceof NavigationError) {
       this.loadingBar.stop();
     }
+    this.currentUser = this.authService.isLoggedIn();
+  }
+  logout() {
+    this.authService.logout();
   }
 }
