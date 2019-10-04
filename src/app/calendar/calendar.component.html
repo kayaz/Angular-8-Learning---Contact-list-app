@@ -10,7 +10,9 @@
     </div>
   </div>
   <div class="card-body">
-    <full-calendar #calendar defaultView="dayGridMonth"
+    <full-calendar
+      #calendar
+      defaultView="dayGridMonth"
       [plugins]="calendarPlugins"
       [events]="eventsModel"
       (dateClick)="handleDateClick($event)"
@@ -69,6 +71,7 @@
           >
           <div class="input-group-append">
             <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"></button>
+            <ngb-datepicker #d></ngb-datepicker>
           </div>
         </div>
         <div *ngIf="submitted && modalForm.controls.data.errors" class="text-danger">
@@ -98,6 +101,9 @@
                formControlName="typeahead_user"
                name="typeahead_user"
         >
+        <ng-template #rt let-name="result" let-t="term">
+          <ngb-highlight [result]="name.nazwisko" [term]="t"></ngb-highlight>
+        </ng-template>
         <div *ngIf="submitted && modalForm.controls.typeahead_user.errors" class="text-danger">
           <div *ngIf="modalForm.controls.typeahead_user.errors.required">To pole jest wymagane</div>
         </div>
@@ -117,10 +123,4 @@
     <button type="submit" class="btn btn-secondary" *ngIf="isHidden" [disabled]="!modalForm.valid">Zapisz</button>
   </div>
   </form>
-</ng-template>
-
-<ngb-datepicker #d></ngb-datepicker>
-
-<ng-template #rt let-name="result" let-t="term">
-  <ngb-highlight [result]="name.nazwisko" [term]="t"></ngb-highlight>
 </ng-template>

@@ -5,12 +5,13 @@ import { AuthGuard } from './_guards/auth.guard';
 import { ContactAddComponent } from './contact-add/contact-add.component';
 import { ContactEditComponent } from './contact-edit/contact-edit.component';
 import { ContactListComponent } from './contact-list/contact-list.component';
-
+import { InvestmentsComponent } from './investments/investments.component';
 import { CalendarComponent } from './calendar/calendar.component';
 
 import { RefreshComponent } from './refresh/refresh.component';
 
 import { LoginComponent } from './auth/login.component';
+
 
 const routes: Routes = [
   {
@@ -32,6 +33,11 @@ const routes: Routes = [
     path: 'calendar',
     canActivate: [AuthGuard],
     component: CalendarComponent
+  },
+  {
+    path: 'investments',
+    canActivate: [AuthGuard],
+    component: InvestmentsComponent
   },
   {
     path: 'refresh',

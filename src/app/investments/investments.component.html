@@ -1,0 +1,51 @@
+<div class="card mt-5">
+  <div class="card-header">
+    <div class="row">
+      <div class="col-8 d-flex align-items-center">
+        <h5 class="mb-0">Lista inwestycji</h5>
+      </div>
+      <div class="col-4 text-right">
+        <a class="btn btn-sm btn-success"><i class="fa fa-plus-circle"></i> <strong>DODAJ INWESTYCJĘ</strong></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <table class="table table-striped table-sm mb-0">
+      <thead class="thead-light">
+      <tr>
+        <td colspan="4"><input type="text" class="form-control" placeholder="Nazwa inwestycji" [(ngModel)]="searchTerm"></td>
+        <td colspan="2"><button type="button" class="btn btn-sm btn-primary" (click)="getList()"><i class="fa fa-refresh"></i> Odśwież listę</button></td>
+      </tr>
+      <tr>
+        <th>Nazwa</th>
+        <th>Adres</th>
+        <th>Strona www</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let invest of invests | filter:searchTerm">
+        <td>{{ invest.nazwa }}</td>
+        <td>{{ invest.adres }}</td>
+        <td>{{ invest.www }}</td>
+        <td>{{ invest.status }}</td>
+        <td>
+          <a class="btn btn-sm btn-primary mr-1"><i class="fa fa-pencil"></i> Edytuj</a>
+          <button class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> Usuń</button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card-footer">
+    <div class="row">
+      <div class="col-8 d-flex align-items-center"></div>
+      <div class="col-4 text-right">
+        <a class="btn btn-sm btn-success"><i class="fa fa-plus-circle"></i> <strong>DODAJ INWESTYCJĘ</strong></a>
+      </div>
+    </div>
+  </div>
+</div>
+

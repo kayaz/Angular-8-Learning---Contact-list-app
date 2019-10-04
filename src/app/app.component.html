@@ -41,6 +41,9 @@
                   <li class="nav-item" *ngIf="currentUser">
                     <a class="nav-link" routerLink="calendar" routerLinkActive="active">Kalendarz</a>
                   </li>
+                <li class="nav-item" *ngIf="currentUser">
+                    <a class="nav-link" routerLink="investments" routerLinkActive="active">Inwestycje</a>
+                  </li>
               </ul>
           </div>
           <button *ngIf="currentUser" type="button" class="float-right btn btn-outline-danger btn-sm" (click)="logout()">Wyloguj</button>
